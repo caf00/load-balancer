@@ -1,0 +1,71 @@
+version: "3"
+networks:
+  redes:
+    name: redes
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+services:
+  server01:
+    image: "nginx"
+    container_name: server01
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+    ports:
+      - 83:80
+    volumes:
+      - "./index.server01.html:/usr/share/nginx/html/index.html"
+    networks:
+      redes:
+        ipv4_address: 172.18.0.4
+  server02:
+    image: "nginx"
+    container_name: server02
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: 700M
+    ports:
+      - 82:80
+    volumes:
+      - "./index.server02.html:/usr/share/nginx/html/index.html"
+    networks:
+      redes:
+        ipv4_address: 172.18.0.5
+  server03:
+    image: "nginx"
+    container_name: server03
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    ports:
+      - 81:80
+    volumes:
+      - "./index.server03.html:/usr/share/nginx/html/index.html"
+    networks:
+      redes:
+        ipv4_address: 172.18.0.6
+  balancer:
+    image: "nginx"
+    container_name: balancer
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    ports:
+      - 80:80
+    volumes:
+      - "./default.conf:/etc/nginx/conf.d/default.conf"
+    networks:
+      redes:
+        ipv4_address: 172.18.0.3
